@@ -3,29 +3,41 @@ from .utils import get_stock_price
 from django.contrib import messages
 from django.contrib.auth  import authenticate,  login, logout
 from django.contrib.auth.models import User
-from .models import Watchlist
+from .models import Watchlist, Stock
 # Create your views here.
 
 
 def dashboard(request):
-    # Example usage of get_stock_price function
-    symbol = 'AAPL'  # Example stock symbol 
-    latest_price = get_stock_price(symbol)
-    # latest_price = 'temp'
-    return render(request, 'index.html', {'latest_price': latest_price})
+    # symbol = 'AAPL'  # Example stock symbol 
+    # latest_price = get_stock_price(symbol)
+    # # latest_price = 'temp'
+    # return render(request, 'index.html', {'latest_price': latest_price})
 
-    # if request.user.is_authenticated:
-    #     watchlist = Watchlist.objects.filter(user=request.user).first()
-    #     if watchlist:
-    #         stock_prices = {}
-    #         for stock in watchlist.stocks.all():
-    #             price = get_stock_price(stock.symbol)
-    #             stock_prices[stock.symbol] = price
-    #     else:
-    #         stock_prices = None
-    #     return render(request, 'index.html', {'stock_prices': stock_prices})
-    # else:
-    #     return render(request, 'index.html')
+    if request.user.is_authenticated:
+        watchlist = Watchlist.objects.filter(user=request.user).first()
+        if watchlist:
+            stock_prices = {}
+            for stock in watchlist.stocks.all():
+                price = get_stock_price(stock.symbol)
+                stock_prices[stock.symbol] = price
+        else:
+            stock_prices = None
+        return render(request, 'index.html', {'stock_prices': stock_prices})
+    else:
+        return render(request, 'index.html')
+
+
+def create_watchlist(request):
+    if request.method == 'POST':
+        symbol = request.POST.get('symbol')
+        if symbol:
+            # Create or get the stock object
+            stock, created = Stock.objects.get_or_create(symbol=symbol)
+            # Get or create the user's watchlist
+            watchlist, created = Watchlist.objects.get_or_create(user=request.user)
+            watchlist.stocks.add(stock)
+            watchlist.save()
+    return redirect('/')
 
 # signup
 def handleSignUp(request):
@@ -87,9 +99,3 @@ def handelLogout(request):
     logout(request)
     messages.success(request, "Successfully logged out")
     return redirect(request.META.get('HTTP_REFERER', 'home'))
-
-# from django.shortcuts import render
-# from django.http import HttpResponse
-
-# def dashboard(request):
-#     return HttpResponse("Hello world!")

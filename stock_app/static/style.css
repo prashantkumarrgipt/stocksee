@@ -1,0 +1,32 @@
+p{
+    color: #e60000;
+    padding-top: 30px;
+    margin: 10px;
+}
+.nav-link{
+    color:white !important;
+}
+.navbar-brand{
+    color: white !important;
+    font-style: italic;
+    text-decoration: underline !important;
+}
+.stock-dash-heading{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff8800;
+}
+.user-name{
+    position: absolute;
+    right: 0;
+    margin-right: 20px;
+    font-size: larger;
+    color: blue;
+}
+.input-watchlist{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
