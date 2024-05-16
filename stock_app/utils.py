@@ -1,0 +1,13 @@
+# to fetch stock data from Alpha Vantage
+
+import requests
+
+def get_stock_price(symbol):
+    api_key = 'U2I32PFG3P2X9VP5'  # Alpha Vantage API key
+    url = f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=1min&apikey={api_key}'
+    response = requests.get(url)
+    data = response.json()
+    latest_data = data['Time Series (1min)']
+    latest_timestamp = list(latest_data.keys())[0]  # Get the latest timestamp
+    latest_price = latest_data[latest_timestamp]['4. close']  # Get the latest closing price
+    return latest_price
