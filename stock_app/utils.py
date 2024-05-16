@@ -1,7 +1,7 @@
 import requests
 
 def get_stock_price(symbol):
-    api_key = 'E99XMHGICFXXSFFJ'  # Alpha Vantage API key
+    api_key = '3VM3BKL846EDGJXA'  # Alpha Vantage API key
     url = f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=1min&apikey={api_key}'
     response = requests.get(url)
     data = response.json()
