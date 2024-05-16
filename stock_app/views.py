@@ -1,9 +1,11 @@
 from django.shortcuts import render,HttpResponse , redirect
+import requests
 from .utils import get_stock_price
 from django.contrib import messages
 from django.contrib.auth  import authenticate,  login, logout
 from django.contrib.auth.models import User
 from .models import Watchlist, Stock
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -16,16 +18,16 @@ def dashboard(request):
     if request.user.is_authenticated:
         watchlist = Watchlist.objects.filter(user=request.user).first()
         if watchlist:
-            stock_prices = {}
+            stock_prices= {}
             for stock in watchlist.stocks.all():
                 price = get_stock_price(stock.symbol)
-                stock_prices[stock.symbol] = price
-        else:
-            stock_prices = None
+                if price:
+                    stock_prices[stock.symbol] = price
+                else:
+                    stock_prices[stock.symbol] = "N/A"
         return render(request, 'index.html', {'stock_prices': stock_prices})
     else:
         return render(request, 'index.html')
-
 
 def create_watchlist(request):
     if request.method == 'POST':
