@@ -17,8 +17,8 @@ def dashboard(request):
 
     if request.user.is_authenticated:
         watchlist = Watchlist.objects.filter(user=request.user).first()
+        stock_prices= {}
         if watchlist:
-            stock_prices= {}
             for stock in watchlist.stocks.all():
                 price = get_stock_price(stock.symbol)
                 if price:
