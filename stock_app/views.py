@@ -37,7 +37,7 @@ def create_watchlist(request):
             watchlist, created = Watchlist.objects.get_or_create(user=request.user)
             watchlist.stocks.add(stock)
             watchlist.save()
-    return redirect('/')
+    return redirect('home')
 
 # signup
 def handleSignUp(request):
@@ -65,16 +65,31 @@ def handleSignUp(request):
              messages.error(request, " Passwords do not match")
              return redirect('home')
         
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+            return redirect('home')
+        
         # Create the user
-        myuser = User.objects.create_user(username, email, pass1)
-        myuser.first_name= fname
-        myuser.last_name= lname
-        myuser.save()
-        messages.success(request, " Your account has been successfully created")
-        return redirect(request.META.get('HTTP_REFERER', 'home'))
+        # Create the user
+        try:
+            myuser = User.objects.create_user(username, email, pass1)
+            myuser.first_name = fname
+            myuser.last_name = lname
+            myuser.save()
+            messages.success(request, "Your account has been successfully created")
+            return redirect('home')  # Assuming you have a login view
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+            return redirect('home')
 
     else:
-        return HttpResponse("404 - Not found")
+        return render(request, 'home')
+
+    # else:
+    #     return HttpResponse("404 - Not found")
+ 
+        
 
 # login
 def handeLogin(request):
@@ -87,7 +102,7 @@ def handeLogin(request):
         if user is not None:
             login(request, user)
             messages.success(request, "Successfully Logged In")
-            return redirect(request.META.get('HTTP_REFERER', 'home'))
+            return redirect(request.META.get('HTTP_REFERER', 'index'))
         else:
             messages.error(request, "Invalid credentials! Please try again")
             return redirect("home")
